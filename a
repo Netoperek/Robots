@@ -1,0 +1,151 @@
+4 5 
+20
+14
+robots id 6 covers 1
+x 0  y 0
+x_min 0
+x_max 4
+y_min 0
+y_max 3
+robots id 14 covers 1
+x 0  y 0
+x_min 0
+x_max 4
+y_min 0
+y_max 3
+robots id 5 covers 2
+x 0  y 0
+x -1  y 0
+x_min 1
+x_max 4
+y_min 0
+y_max 3
+robots id 10 covers 2
+x 0  y 0
+x 0  y 1
+x_min 0
+x_max 4
+y_min 0
+y_max 2
+robots id 3 covers 2
+x 0  y 0
+x 0  y 1
+x_min 0
+x_max 4
+y_min 0
+y_max 2
+robots id 9 covers 3
+x 0  y 0
+x 0  y 1
+x 0  y 2
+x_min 0
+x_max 4
+y_min 0
+y_max 1
+robots id 12 covers 3
+x 0  y 0
+x 1  y 0
+x 2  y 0
+x_min 0
+x_max 2
+y_min 0
+y_max 3
+robots id 11 covers 3
+x 0  y 0
+x -1  y 0
+x -2  y 0
+x_min 2
+x_max 4
+y_min 0
+y_max 3
+robots id 1 covers 4
+x 0  y 0
+x 0  y 1
+x 1  y 1
+x 2  y 1
+x_min 0
+x_max 2
+y_min 0
+y_max 2
+robots id 2 covers 5
+x 0  y 0
+x 1  y 0
+x 2  y 0
+x 1  y 1
+x 1  y -1
+x_min 0
+x_max 2
+y_min 1
+y_max 2
+robots id 13 covers 5
+x 0  y 0
+x 1  y 0
+x 2  y 0
+x 3  y 0
+x 4  y 0
+x_min 0
+x_max 0
+y_min 0
+y_max 3
+robots id 4 covers 5
+x 0  y 0
+x -1  y 0
+x -2  y 0
+x -1  y -1
+x -1  y -2
+x_min 2
+x_max 4
+y_min 2
+y_max 3
+robots id 8 covers 6
+x 0  y 0
+x 1  y 0
+x 2  y 0
+x 3  y 0
+x 2  y -1
+x 1  y 1
+x_min 0
+x_max 1
+y_min 1
+y_max 2
+robots id 7 covers 7
+x 0  y 0
+x 1  y 0
+x 2  y 0
+x 2  y 1
+x 2  y 2
+x 1  y 2
+x 0  y 2
+x_min 0
+x_max 2
+y_min 0
+y_max 1
+6 14 5 10 3 9 12 11 1 2 13 4 8 7 
+WINNER 1
+max 0
+i 1
+covers !!! 20
+ids  6 5 7 4 11 3
+meg 1
+Vectors 0
+x 3 y 2
+ x 1 y 3
+ x 0 y 3
+ x 2 y 1
+ x 3 y 1
+ x 4 y 1
+ x 4 y 2
+ x 4 y 3
+ x 3 y 3
+ x 2 y 3
+ x 2 y 2
+ x 1 y 2
+ x 0 y 2
+ x 1 y 1
+ x 1 y 0
+ x 4 y 0
+ x 3 y 0
+ x 2 y 0
+ x 0 y 0
+ x 0 y 1
+ 
