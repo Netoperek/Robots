@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>  
-#include <strings.h>  
-
-#define BUFLEN 100
 
 typedef struct Move{
 	char direction;
@@ -16,7 +13,7 @@ typedef struct Coord{
 } Coord;
 
 typedef struct Robot{
-	struct Coord *coords;
+	Coord *coords;
 	Coord ** vectors;
 	int vector_h;
 	int vector_w;
@@ -56,7 +53,7 @@ int vector_h = 0;
 
 Coord *  moveCoords(int x, int y, Coord * coords, int covers){
 	int i = 0;
-	struct Coord * coordsTMP = malloc(covers * sizeof * coordsTMP);
+	Coord * coordsTMP = malloc(covers * sizeof * coordsTMP);
 	memcpy(coordsTMP, coords, covers * sizeof(Coord));
 
 	for(i = 0; i < covers; i++){
@@ -87,7 +84,6 @@ int compareCoords(Coord * cords1, Coord *cords2, int h1, int h2){
 //merges to vectors in mergedVector arg
 void mergeVectors(Coord * mergedVector, Coord * vector1, Coord * vector2, int l1 , int l2){
 	int i = 0;
-	int j = 0;
 	int k = 0;
 
 	for(i = 0; i < l1; i++)
@@ -99,7 +95,7 @@ void mergeVectors(Coord * mergedVector, Coord * vector1, Coord * vector2, int l1
 }
 
 //merges two robots into MergedRobot
-struct MergedRobot mergeRobots(Robot robot1,Robot robot2){
+MergedRobot mergeRobots(Robot robot1,Robot robot2){
 	MergedRobot mergedRobot;
 	int i = 0;
 	int j = 0;
@@ -138,50 +134,47 @@ void mergeMergedWithRobot(MergedRobot * robot1,Robot robot2){
 	int k = 0;
 	int flag = 0;
 
-	Coord ** vectors = (Coord **) malloc ( robot1->vector_w * robot2.vector_w * sizeof (Coord *) );
+	Coord ** vectors = (Coord **) malloc (limit * robot2.vector_w * sizeof * vectors );
 
-	for(i = 0; i < limit; i++){
-		for(j = 0; j < robot2.vector_w; j++){
-			if ( compareCoords(robot1->vectors[i], robot2.vectors[j], robot1->covers, robot2.vector_h) == 1 ){
-				vectors[ robot1->merged++ ] = ( Coord* ) malloc( (robot1->covers + robot2.covers ) * sizeof (Coord));
-				mergeVectors(vectors[ robot1->merged - 1 ], robot1->vectors[i], robot2.vectors[j], robot1->covers, robot2.vector_h);
+	for(j = 0; j < robot2.vector_w; j++){
+		for(i = 0; i < limit; i++){
+			if ( compareCoords(robot1->vectors[i], robot2.vectors[j], robot1->covers, robot2.covers) == 1 ){
+				vectors[ robot1->merged++ ] = ( Coord* ) malloc( (robot1->covers + robot2.covers ) * sizeof * vectors[ robot1->merged - 1] );
+				mergeVectors(vectors[ robot1->merged - 1 ], robot1->vectors[i], robot2.vectors[j], robot1->covers, robot2.covers);
 				flag = 1;
 			}
 		}
 	}
 
-	vectors = (Coord **) realloc (vectors , robot1->merged * sizeof (Coord *) );
-
 	if(flag == 1){
-
+		vectors = (Coord **) realloc (vectors , robot1->merged * sizeof * vectors );
+		for(k = 0; k < limit; k++){
+			free(robot1->vectors[k]);
+		}
 		free(robot1->vectors);
+
 		robot1->ids[ robot1->idIndex++ ] = robot2.id;
 		robot1->vectors = vectors;
-		robot1->covers = (robot1->covers + robot2.covers );
-
+		robot1->covers = ( robot1->covers + robot2.covers );
 	}else{
 		robot1->merged = limit;
 	}
 }
-
 //checks if to vectors collide - not used in sollution
 int checkIfCollides(Coord ** vectors1, 	Coord ** vectors2, int h1, int w1, int h2, int w2){
 	int i = 0;
 	int j = 0;
-	for (i = 0; i < w1 ; i++){
-		for(j = 0 ; j < w2; j++){
-			if ( compareCoords(vectors1[i], vectors2[j], h1, h2) == 1){
+	for (i = 0; i < w1 ; i++)
+		for(j = 0 ; j < w2; j++)
+			if ( compareCoords(vectors1[i], vectors2[j], h1, h2) == 1)
 				return 0;
-			}
-		}
-	}
+
 	return 1;
 }
 
 
-struct Robot setVectors(Robot robot){
+ Robot setVectors(Robot robot){
 	int i = 0;
-	double **table;
 	int possibilities = (robot.max_x - robot.min_x + 1) * (robot.max_y - robot.min_y + 1);
 	int x = 0;
 	int y = 0;
@@ -250,82 +243,83 @@ void QuickSortM(MergedRobot *T, int Lo, int Hi){
 }
 
 // extracts width and height
-void getWidhAndHeight(char * buf){
+void getWidthAndHeight(){
 
-	int i = 0;
+	int n = 0;
+	char tmpScanf;
+	n = scanf("%d", &width);
+	n = 1;
 
-	width =  buf[ i++ ] - '0';
-
-	while(buf[i] != ' ')
-		width = width * 10 + buf[ i ++ ] - '0';  
+	while(n){
+		n = scanf("%c", &tmpScanf);
+		n = 1;
+		if(tmpScanf == ' ') break;
+		width = width * 10 + (tmpScanf - '0');  
+		
+	}
 	
+	n = scanf("%d", &height);
 
-	i++;
-	height = buf[ i++ ] - '0';
-
-	while( i < strlen(buf) && buf[i] != '\n')
-		height = height * 10 + buf[ i ++ ] - '0';
+	while(1){
+		n = scanf("%c", &tmpScanf);
+		if(tmpScanf == '\n') break;
+		height = height * 10 + (tmpScanf - '0'); 
+		
+	}
 	
 }
 
 //extracts single number in line
-int extractInt(char * buf){
-	int i = 0;
+int extractInt(){
+	
 	int number = 0;
+	char tmpScanf;
+	int n;
+	n = scanf("%d", &number);
+	n = 1;
 
-	number =  buf[ i++ ] - '0';
-
-	while( i < strlen(buf) && buf[i] != '\n')
-		number = number * 10 + (buf[ i ++ ] - '0');
+	while(n){
+		n = scanf("%c", &tmpScanf);
+		n = 1;
+		if(tmpScanf == '\n') break;
+		number = number * 10 + (tmpScanf - '0'); 
+	}
 	
 	return number;
 }
 
 //Extracts first Three lines and saves width, height, robotsNumber, toCover to global variables
-void extractFirstThree(FILE *file){
-	char buf[BUFLEN];
+void extractFirstThree(){
 
-	if(fgets(buf, BUFLEN, file) == NULL){
-   		perror("Error while reading line");
-   		exit(EXIT_FAILURE);
-	}
-   	getWidhAndHeight(buf);
+   	getWidthAndHeight();
 
-	if(fgets(buf, BUFLEN, file) == NULL){
-   		perror("Error while reading line");
-   		exit(EXIT_FAILURE);
-    }
-	toCover = extractInt(buf);
+	toCover = extractInt();
 
-	if(fgets(buf, BUFLEN, file) == NULL){
-   		perror("Error while reading line");
-   		exit(EXIT_FAILURE);
-	}
-	robotsNumber = extractInt(buf);
+	robotsNumber = extractInt();
 }
 
-//Checks if line is ok and extracts Move: direction(char) and steps(int)
-struct Move checkAndGetMove(char * buf){
-
-	int i = 0;
-	int j = 0;
+//extracts Move: direction(char) and steps(int)
+struct Move getMove(){
 
 	char direction = '0' ; 
-	int steps = 0; //steps == 0 -> start, steps == 1 extracting steps, steps == 2 steps extracted
+	char tmpScanf;
+	int steps = 0; 
+	int n;
 
-	char charSteps[BUFLEN];
-	bzero(charSteps, BUFLEN);
+	n = scanf("%c", &direction);
+	n = scanf("%d", &steps);
+	n = 1;
 
-	direction = buf[i++];
-	i++;
-	steps = buf[i++] - '0';
-
-	while( i < strlen(buf) && buf[i] != '\n')
-		steps = steps * 10 + (buf[ i ++ ] - '0');
+	while(n){
+		n = scanf("%c", &tmpScanf);
+		n = 1;
+		if(tmpScanf == '\n') break;
+		steps = steps * 10 + (tmpScanf - '0'); 
+	}
 
 	Move move;
 	move.direction = direction; 
-	move.steps = steps; //must be a number checked earlier
+	move.steps = steps; 
 	return move;
 }
 
@@ -349,7 +343,7 @@ void extractBorders(){
 }
 
 //Counts coordinates from moves
-struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
+ Coord * getCoords( Move *moves, int numberOfMoves, int count){
 	Coord *coords = malloc( count* sizeof * coords);
 	Coord coord; 
 	coord.x = 0;
@@ -369,7 +363,7 @@ struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
 	     case 'E' :
 	     	for(j = 0; j < moves[i].steps; j++){
 	     		coord.y += 1;
-	     		if( isCordIn(coord, coords, count  ) ){
+	     		if( isCordIn(coord, coords, c  ) ){
 	     			coords[c++] = coord;
 	     			robotCovers++;
 	     			if(max_y < coord.y ){
@@ -381,7 +375,7 @@ struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
 	     case 'W' :
 	     	for(j = 0; j < moves[i].steps; j++){
 	     		coord.y -= 1;
-				if( isCordIn(coord, coords, count ) ){
+				if( isCordIn(coord, coords, c ) ){
 	     			coords[c++] = coord;
 	     			robotCovers++;
 	     			if(min_y > coord.y){
@@ -393,7 +387,7 @@ struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
 	     case 'N' :
 	     	for(j = 0; j < moves[i].steps; j++){
 	     		coord.x -= 1;
-				if( isCordIn(coord, coords, count ) ){
+				if( isCordIn(coord, coords, c ) ){
 	     			coords[c++] = coord;
 	     			robotCovers++;
 	     			if(min_x > coord.x){
@@ -405,7 +399,7 @@ struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
 	     case 'S':
 	     	for(j = 0; j < moves[i].steps; j++){
 	     		coord.x += 1;
-				if( isCordIn(coord, coords, count ) ){
+				if( isCordIn(coord, coords, c ) ){
 	     			coords[c++] = coord;
 	     			robotCovers++;
 	     			if(max_x < coord.x){
@@ -420,42 +414,26 @@ struct Coord * getCoords(struct Move *moves, int numberOfMoves, int count){
         	break;
 		}
 	}
+	coords = realloc(coords, c * sizeof * coords);
 	extractBorders();
 
 	return coords;
 }
 
 //Extracts Robot's number, number of moves and moves
-struct Robot getRobot(FILE *file){
-	int robotNumber = 0;
-	int numberOfMoves = 0;
+Robot getRobot(){
 	int i = 0;
-	char buf[BUFLEN];
 	Robot robot;
 
-	if(fgets(buf, BUFLEN, file) == NULL){
-   		perror("Error while reading line");
-   		exit(EXIT_FAILURE);
-	}
-	 
-	robot.id = extractInt(buf);
-
-	if(fgets(buf, BUFLEN, file) == NULL){
-   		perror("Error while reading line");
-   		exit(EXIT_FAILURE);
-	}
+	robot.id = extractInt();
 	
-	robot.numberOfMoves = extractInt(buf);
+	robot.numberOfMoves = extractInt();
 
 	moves = realloc(moves, robot.numberOfMoves * sizeof * moves);
 	robot.coords = malloc(robot.numberOfMoves * sizeof * robot.coords);
 
 	for(i = 0; i < robot.numberOfMoves; i++){
-		if(fgets(buf, BUFLEN, file) == NULL){
-	   		perror("Error while reading line");
-	   		exit(EXIT_FAILURE);
-		}
-		moves[i] = checkAndGetMove(buf);
+		moves[i] = getMove();
 	}
 
 	int count = 1;
@@ -474,17 +452,6 @@ struct Robot getRobot(FILE *file){
 	return robot;
 }
 
-//Checks if id is in array of id - returns 1 if so
-int idIsIn(int id, int * ids, int limit){
-	int i = 0;
-
-	for(i = 0; i < limit; i++){
-		if(id == ids[i]){
-			return 1;
-		}
-	}
-	return 0;
-}
 
 //Check if single Robot solves
 int checkIfSingleSolves(Robot * robots){
@@ -497,6 +464,18 @@ int checkIfSingleSolves(Robot * robots){
 	return m;
 }
 
+//Checks if id is in array of id - returns 1 if so
+int idIsIn(int id, int * ids, int limit){
+	int i = 0;
+
+	for(i = 0; i <= limit; i++){
+		if(id == ids[i]){
+			return 1;
+		}
+	}
+	return 0;
+}
+
 //Prints sollution that one robot presents (if one robot solve the puzzle)
 void printSollutionForOne(Robot * robots, int m){
 	robots[m] = setVectors( robots[m] );
@@ -506,7 +485,6 @@ void printSollutionForOne(Robot * robots, int m){
 	printf("%d ", robots[m].id);
 	printf("%d ", robots[m].vectors[0][0].y + 1);
 	printf("%d\n", robots[m].vectors[0][0].x + 1);
-	exit(EXIT_SUCCESS);
 }
 
 void printSollution(MergedRobot * mergedTable, int m, Robot * robots2){
@@ -521,39 +499,30 @@ void printSollution(MergedRobot * mergedTable, int m, Robot * robots2){
 }
 
 int main(int argc, char **argv){
-	//FILE *file = stdin;
-	FILE * file;
 	int i = 0;
 	int j = 0;
 	int m = 0;
 	int flagz = 1;
 	int merged = 0;
-	int k = 0;
 
-	if(argc != 2){
-		printf("Usage: ./main <file>\n");
-		exit(EXIT_FAILURE);
-	}
 
-	if((file=fopen(argv[1], "r")) == NULL) {
-	    perror("Error while openning file");
-	    exit(EXIT_FAILURE);
-	}
+	extractFirstThree();
 
-	extractFirstThree(file);
-
-	struct Robot *robots = malloc(robotsNumber * sizeof * robots);
-	struct Robot *robots2 = malloc(robotsNumber * sizeof * robots);
+	Robot *robots = malloc(robotsNumber * sizeof * robots);
+	Robot *robots2 = malloc(robotsNumber * sizeof * robots);
 
 	for(i = 0 ; i < robotsNumber; i++){
-		robots[i] = getRobot(file);
+		robots[i] = getRobot();
 		robots2[i] = robots[i];
 	}
 
 	QuickSort(robots, 0, robotsNumber -1);
 
 	m = checkIfSingleSolves(robots);
-	if(m != -1)	printSollutionForOne(robots, m);
+	if(m != -1){
+		printSollutionForOne(robots, m);
+		return 0;
+	}	
 	
 	//counting vectors for all robots
 	for(i = robotsNumber - 1; i >= 0 ; i--){
@@ -562,30 +531,30 @@ int main(int argc, char **argv){
 		robots[i].vector_w = vector_w;
 	}
 
+	int start = 0;
+	int howMany = (1 + (robotsNumber -1) ) * 13 / 2;
 	//merging vectors for all reobots and saving in mergetTable
-	MergedRobot * mergedTable = ( MergedRobot* ) malloc( (robotsNumber * (robotsNumber -1) ) * sizeof (MergedRobot));
+	MergedRobot * mergedTable = ( MergedRobot* ) malloc( howMany * sizeof (MergedRobot));
 	for(i = 0; i < robotsNumber ; i++){
-		for(j = 0; j < robotsNumber; j++){
-			if(i != j){
+		start++;
+		for(j = start; j < robotsNumber; j++){
 				mergedTable[ merged++ ] = mergeRobots(robots[i], robots[j]);
 
 			if(mergedTable[ merged - 1 ].covers >= toCover){
 				m = merged - 1;
 					break;
 				}
-			}
 		}
-		if(mergedTable[m].covers >= toCover){
+		if(m != -1 && mergedTable[m].covers >= toCover){
 			flagz = 0;
 			printf("%d\n", mergedTable[m].idIndex);
 			break;
 		}
 	}
 
-	//merging all vectors till sollution is done;
-	while(flagz){
-		QuickSortM(mergedTable, 0, merged - 1);
-		for(m = merged -1 ; m >= 0; m--){
+	if(flagz){
+		//QuickSortM(mergedTable, 0, merged - 1);
+		for(m = merged - 1 ; m >= 0  ; m--){
 			for(i = robotsNumber - 1; i >= 0; i--){
 				if( mergedTable[m].covers > 0 && !idIsIn(robots[i].id, mergedTable[m].ids, mergedTable[m].idIndex) ){
 					MergedRobot * mergedRobotPtr = &mergedTable[m];
@@ -593,28 +562,20 @@ int main(int argc, char **argv){
 
 					if(mergedTable[m].covers >= toCover) break;
 				}
-				if(mergedTable[m].covers == -1){
-					m = - 1;
-					break;
-				}
+				if(mergedTable[m].covers == -1) break;
 				
 			}
 
 			if(mergedTable[m].covers >= toCover) break;
 			
 		}
-		if(mergedTable[m].covers >= toCover) break;
 	}
 
-
-	if(flagz) printf("%d\n", mergedTable[m].idIndex);
-	printSollution(mergedTable, m, robots2);
-
-	if(fclose (file) != 0){
-		perror("Error while closing file");
-		exit(EXIT_FAILURE);
+	if(mergedTable[m].covers >= toCover){
+		if(flagz) printf("%d\n", mergedTable[m].idIndex);
+		printSollution(mergedTable, m, robots2);
+	}else{
+		printf("NO SOLLUTION\n");
 	}
-
 	return 0;
 }
-	
